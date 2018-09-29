@@ -1,0 +1,1 @@
+from .obedience import ObedienceSkill

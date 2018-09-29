@@ -1,0 +1,17 @@
+#JSGF V1.0;
+# https://puneetk.com/basics-of-java-speech-grammar-format-jsgf
+# http://homepages.abdn.ac.uk/k.vdeemter/pages/teaching/NLP/practicals/JSGFGrammar.html
+
+grammar structure;
+
+public <answer> = (oui | non)+;
+
+public <callout> = <nu>;
+<nu> = (ok | bonjour) nu;
+
+public <command> = (<move> | <turn> | <charger> | <cube> | <silence>)+;
+<move> = (en avant | avance | en arrière | recule)+;
+<turn> = (tourne autour | tourne vers la droite | tourne vers la gauche)+;
+<charger> = dort;
+<cube> = (cherche un cube | prend le cube | dépose le cube | lance ton cube | garde ton cube)+;
+<silence> = (soit tranquille | silence)+;

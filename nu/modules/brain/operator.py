@@ -34,7 +34,7 @@ class Operator:
                         logger.debug('Operator executing ' + op_action)
                         op_result = getattr(self.executor, op_action)()
                     if op_sleep > 0:
-                        logger.debug('Operator sleeping for ' + op_sleep + ' seconds...')
+                        logger.debug('Operator sleeping for ' + str(op_sleep) + ' seconds...')
                         sleep(op_sleep)
                 except Exception as op_ex:
                     logger.warning(str(op_ex))

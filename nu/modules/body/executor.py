@@ -199,13 +199,14 @@ class Executor:
         self.set_lift_height(0.0)
 
     def undock_from_charger(self):
-        self.robot.abort_all_actions()
-        time.sleep(0.5)
         if self.is_charging():
-            logger.error('FOUND CHARGING   CHARGING')
             self.robot.stop_all_motors()
-            time.sleep(0.5)
-            self.robot.drive_off_charger_contacts().wait_for_completed(timeout=2)
+            self.robot.abort_all_actions()
+            self.robot._set_none_behavior()
+            self.robot.clear_idle_animation()
+            time.sleep(2.5)
+            self.robot.drive_off_charger_contacts().wait_for_completed()
+            time.sleep(2.5)
 
     def move_forward(self, distance=1.0, speed=25):
         self.robot.drive_straight(distance_inches(distance), speed_mmps(speed)).wait_for_completed(timeout=2)

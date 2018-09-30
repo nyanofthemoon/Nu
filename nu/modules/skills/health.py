@@ -42,6 +42,7 @@ class Health:
                 payload = Skill.payload()
                 payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.WAKEUP}))
                 payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
+                payload.append(Skill.message(ExecutableActions.MOVE_FORWARD, {'distance': 4.5}))
                 payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
                 Skill.enqueue(__class__, payload, )
             else:

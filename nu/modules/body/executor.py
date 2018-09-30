@@ -200,16 +200,14 @@ class Executor:
 
     def undock_from_charger(self):
         if self.robot.is_on_charger == True or self.is_charging():
-            self.robot.stop_all_motors()
-            self.robot.abort_all_actions(log_abort_messages=True)
-            self.robot.drive_off_charger_contacts(in_parallel=True, num_retries=5).wait_for_completed()
-            self.move_forward(4.5)
+            self.robot.stop_freeplay_behaviors()
+            self.robot.drive_off_charger_contacts(num_retries=5).wait_for_completed()
 
-    def move_forward(self, distance_in=1.0):
-        self.robot.drive_straight(distance_inches(distance_in), speed_mmps(25)).wait_for_completed()
+    def move_forward(self, distance=1.0, speed=25):
+        self.robot.drive_straight(distance_inches(distance), speed_mmps(speed)).wait_for_completed()
 
-    def move_backward(self, distance_in=1.0):
-        self.robot.drive_straight(distance_inches((distance_in*-1)), speed_mmps(25)).wait_for_completed()
+    def move_backward(self, distance=1.0):
+        self.robot.drive_straight(distance_inches((distance*-1)), speed_mmps(speed)).wait_for_completed()
 
     def go_to_charger(self):
         if (self.robot.is_on_charger == False):

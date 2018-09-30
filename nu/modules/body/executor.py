@@ -200,11 +200,7 @@ class Executor:
 
     def undock_from_charger(self):
         if self.is_charging() or self.robot.is_on_charger:
-            self.robot.stop_all_motors()
-            self.robot.abort_all_actions()
-            self.robot._set_none_behavior()
-            self.robot.clear_idle_animation()
-            self.robot.drive_off_charger_contacts().wait_for_completed()
+            self.robot.drive_off_charger_contacts()
 
     def move_forward(self, distance=1.0, speed=25):
         self.robot.drive_straight(distance_inches(distance), speed_mmps(speed))

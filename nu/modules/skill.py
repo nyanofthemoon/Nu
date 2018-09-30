@@ -17,9 +17,10 @@ class Skill:
         return []
 
     @staticmethod
-    def message(action, params={}):
+    def message(action, params={}, sleep=0):
         return {
             'action': action,
+            'sleep': sleep,
             'params': params
         }
 

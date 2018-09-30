@@ -23,12 +23,11 @@ SMemoryPubSub = SMemoryStorageManagerInstance.pubsub
 
 class SMemoryEntry:
 
-    def __init__(self, name, priority, expiry, payload, freeplay):
+    def __init__(self, name, priority, expiry, payload):
         self.name = name
         self.priority = priority
         self.expiry = expiry
         self.payload = payload
-        self.freeplay = freeplay
 
     def __eq__(self, other):
         try:
@@ -60,16 +59,14 @@ class SMemoryQueueManager:
             callback(next)
             queue.task_done()
 
-
-
     def stop(self):
         self.thread._stop()
 
     def flush(self):
         self.queue.empty()
 
-    def put(self, name, priority, expiry, payload, freeplay=True):
-        self.queue.put(SMemoryEntry(name, priority, expiry, payload, freeplay))
+    def put(self, name, priority, expiry, payload):
+        self.queue.put(SMemoryEntry(name, priority, expiry, payload))
 
     def get(self):
         return self.queue.get()

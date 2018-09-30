@@ -199,20 +199,18 @@ class Executor:
         self.set_lift_height(0.0)
 
     def undock_from_charger(self):
-        if self.is_charging():
+        if self.is_charging() or self.robot.is_on_charger:
             self.robot.stop_all_motors()
             self.robot.abort_all_actions()
             self.robot._set_none_behavior()
             self.robot.clear_idle_animation()
-            time.sleep(2.5)
             self.robot.drive_off_charger_contacts().wait_for_completed()
-            time.sleep(2.5)
 
     def move_forward(self, distance=1.0, speed=25):
-        self.robot.drive_straight(distance_inches(distance), speed_mmps(speed)).wait_for_completed(timeout=2)
+        self.robot.drive_straight(distance_inches(distance), speed_mmps(speed))
 
     def move_backward(self, distance=1.0, speed=25):
-        self.robot.drive_straight(distance_inches((distance*-1)), speed_mmps(speed)).wait_for_completed(timeout=2)
+        self.robot.drive_straight(distance_inches((distance*-1)), speed_mmps(speed))
 
     def go_to_charger(self):
         if (self.robot.is_on_charger == False):

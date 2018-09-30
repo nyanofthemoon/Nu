@@ -40,7 +40,6 @@ class Health:
             if self.battery_is_high():
                 self.attempts = 0
                 payload = Skill.payload()
-                payload.append(Skill.message(ExecutableActions.FREEZE))
                 payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
                 payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.WAKEUP}))
                 payload.append(Skill.message(ExecutableActions.BECOME_IDLE))

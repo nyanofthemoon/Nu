@@ -71,6 +71,10 @@ class Executor:
             self.robot.enable_freeplay_cube_lights(enable=True)
             self.robot.start_freeplay_behaviors()
 
+    def become_asleep(self):
+        self.freeze()
+        self._update_sleep_mood()
+
     def become_idle(self):
         self.freeze()
         self._update_mood()
@@ -271,6 +275,9 @@ class Executor:
             animation = cozmo.anim.Triggers.NothingToDoBoredIdle
         self.robot.set_idle_animation(animation)
 
+    def _update_sleep_mood(self):
+        self.robot.set_idle_animation(Emote.sleep())
+
     def constitution(self):
         return self.constitution
 
@@ -427,6 +434,7 @@ class ExecutableActions:
     RUSH_TO_VISIBLE_PERSON = 'rush_to_visible_person'
     HICCUPS = 'hiccups'
     BECOME_IDLE = 'become_idle'
+    BECOME_ASLEEP = 'become_asleep'
     UPDATE_CONSTITUTION = 'update_constitution'
     UPDATE_ENERGY = 'update_energy'
     UPDATE_HAPPINESS = 'update_happiness'
@@ -434,8 +442,10 @@ class ExecutableActions:
 
 class ExecutableSingleEmotes:
     UPSET = 'upset'
+    ANNOYED = 'annoyed'
     CURIOUS = 'curious'
     HAPPY = 'happy'
+    EXCITED = 'excited'
     UNHAPPY = 'unhappy'
     SURPRISED = 'surprised'
     SCARED = 'scared'
@@ -469,13 +479,19 @@ class EmoteChain:
 class Emote:
 
     @staticmethod
-    def upset():
+    def annoyed():
         return SystemRandom().choice([
             cozmo.anim.Triggers.CodeLabFrustrated,
+            cozmo.anim.Triggers.CozmoSaysBadWord,
+            cozmo.anim.Triggers.CubeMovedUpset,
+        ])
+
+    @staticmethod
+    def upset():
+        return SystemRandom().choice([
             cozmo.anim.Triggers.MajorFail,
             cozmo.anim.Triggers.FrustratedByFailureMajor,
             cozmo.anim.Triggers.CozmoSaysBadWord,
-            cozmo.anim.Triggers.CubeMovedUpset,
             cozmo.anim.Triggers.FrustratedByFailure
         ])
 
@@ -488,11 +504,16 @@ class Emote:
         ])
 
     @staticmethod
-    def happy():
+    def excited():
         return SystemRandom().choice([
             cozmo.anim.Triggers.MajorWin,
-            cozmo.anim.Triggers.CodeLabWin,
             cozmo.anim.Triggers.CodeLabExcited,
+        ])
+
+    @staticmethod
+    def happy():
+        return SystemRandom().choice([
+            cozmo.anim.Triggers.CodeLabWin,
             cozmo.anim.Triggers.CodeLabHappy,
             cozmo.anim.Triggers.CodeLabReactHappy,
             cozmo.anim.Triggers.DriveLoopHappy

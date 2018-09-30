@@ -40,14 +40,13 @@ class Health:
             if self.battery_is_high():
                 self.attempts = 0
                 payload = Skill.payload()
-                payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
                 payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.WAKEUP}))
                 payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
+                payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
                 Skill.enqueue(__class__, payload, )
             else:
                 payload = Skill.payload()
-                payload.append(Skill.message(ExecutableActions.FREEZE))
-                payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.SLEEP}))
+                payload.append(Skill.message(ExecutableActions.BECOME_ASLEEP))
                 Skill.enqueue(__class__, payload)
 
         if self.recharging == False:
@@ -60,7 +59,7 @@ class Health:
                         "I'm not feeling well...",
                         "I'm feeling weak..."
                     ])
-                    payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.TIRED}))
+                    payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.UNHAPPY}))
                     payload.append(Skill.message(ExecutableActions.SPEAK_SLOW, {'text': text}))
                     payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
                 else:
@@ -71,14 +70,13 @@ class Health:
                         "Is my docking station around?"
                     ])
                     payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': text}))
-                    payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.UNHAPPY}))
+                    payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.TIRED}))
                     payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
                 payload.append(Skill.message(ExecutableActions.DOCK_AND_RECHARGE))
                 Skill.enqueue(__class__, payload)
 
     def handle_failure(self, action, params):
         payload = Skill.payload()
-        payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
         payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.UPSET}))
         Skill.enqueue(__class__, payload)
 
@@ -86,8 +84,8 @@ class Health:
         if self.recharging == False:
             payload = Skill.payload()
             payload.append(Skill.message(ExecutableActions.DISABLE_FREEPLAY))
-            payload.append(Skill.message(ExecutableActions.FREEZE))
             payload.append(Skill.message(ExecutableActions.EMOTE_CHAIN, {'type': ExecutableChainEmotes.FALL_ASLEEP}))
+            payload.append(Skill.message(ExecutableActions.BECOME_ASLEEP))
             Skill.enqueue(__class__, payload)
 
 

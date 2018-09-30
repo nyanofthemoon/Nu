@@ -26,8 +26,8 @@ Contributing to the Cozmo community! This framework allows cuztomizing the robot
 ### Launch
 - Place Cozmo on the charger and start the in-app SDK mode
 - Launch Redis using `redis-server`
-- Launch runner using `python -m nu -h` or `python3.6.6 -m nu -v`
-- Launch runner and log using `python3.7 -m nu -v 2>&1 >& log.txt &`
+- Launch runner using `python -m nu -h` or `python3.6.6 -m nu`
+- Launch verbose runner and log using `python3.7 -m nu -vv 2>&1 >& log.txt &`
 
 ## Contributing
 

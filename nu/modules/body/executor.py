@@ -106,32 +106,32 @@ class Executor:
         self.robot.execute_custom_behavior(159)
 
     def speak_slowly(self, text, excited=False):
-        self.robot.say_text(text, in_parallel=True, num_retries=1, voice_pitch=-0.15, duration_scalar=1.25, play_excited_animation=excited).wait_for_completed()
+        self.robot.say_text(text, in_parallel=True, num_retries=1, voice_pitch=-0.15, duration_scalar=1.25, play_excited_animation=excited).wait_for_completed(timeout=5)
 
     def speak(self, text, excited=False):
-        self.robot.say_text(text, in_parallel=True, num_retries=1, play_excited_animation=excited).wait_for_completed()
+        self.robot.say_text(text, in_parallel=True, num_retries=1, play_excited_animation=excited).wait_for_completed(timeout=5)
 
     def speak_quickly(self, text, excited=False):
-        self.robot.say_text(text, in_parallel=True, num_retries=1, voice_pitch=0.15, duration_scalar=0.75, play_excited_animation=excited).wait_for_completed()
+        self.robot.say_text(text, in_parallel=True, num_retries=1, voice_pitch=0.15, duration_scalar=0.75, play_excited_animation=excited).wait_for_completed(timeout=5)
 
     # http://cozmosdk.anki.com/docs/generated/cozmo.anim.html
     def emote_single(self, type):
         trigger = getattr(Emote, type)()
-        self.robot.play_anim_trigger(trigger).wait_for_completed()
+        self.robot.play_anim_trigger(trigger).wait_for_completed(timeout=5)
 
     def emote_chain(self, type):
         triggers = getattr(EmoteChain, type)()
         for trigger in triggers:
-            self.robot.play_anim_trigger(trigger).wait_for_completed()
+            self.robot.play_anim_trigger(trigger).wait_for_completed(timeout=10)
 
     def set_head_angle(self, angle):
-        self.robot.set_head_angle(degrees(angle)).wait_for_completed()
+        self.robot.set_head_angle(degrees(angle)).wait_for_completed(timeout=2)
 
     def set_lift_height(self, height):
-        self.robot.set_lift_height(height).wait_for_completed()
+        self.robot.set_lift_height(height).wait_for_completed(timeout=2)
 
     def turn(self, angle):
-        self.robot.turn_in_place(degrees(angle)).wait_for_completed()
+        self.robot.turn_in_place(degrees(angle)).wait_for_completed(timeout=2)
 
     def turn_right(self):
         self.turn(-90)
@@ -199,14 +199,14 @@ class Executor:
         self.set_lift_height(0.0)
 
     def undock_from_charger(self):
-        #if self.robot.is_on_charger == True or self.is_charging():
-        self.robot.drive_off_charger_contacts(num_retries=3, in_parallel=True)
+        if self.robot.is_on_charger == True or self.is_charging():
+          self.robot.drive_off_charger_contacts(in_parallel=True).wait_for_completed(timeout=2)
 
     def move_forward(self, distance=1.0, speed=25):
-        self.robot.drive_straight(distance_inches(distance), speed_mmps(speed), in_parallel=True).wait_for_completed()
+        self.robot.drive_straight(distance_inches(distance), speed_mmps(speed), in_parallel=True).wait_for_completed(timeout=2)
 
     def move_backward(self, distance=1.0, speed=25):
-        self.robot.drive_straight(distance_inches((distance*-1)), speed_mmps(speed),  in_parallel=True).wait_for_completed()
+        self.robot.drive_straight(distance_inches((distance*-1)), speed_mmps(speed), in_parallel=True).wait_for_completed(timeout=2)
 
     def go_to_charger(self):
         if (self.robot.is_on_charger == False):
@@ -307,7 +307,7 @@ class Executor:
 
     def _turn_towards_face(self, face):
         try:
-            self.robot.turn_towards_face(face, num_retries=1).wait_for_completed()
+            self.robot.turn_towards_face(face).wait_for_completed(timeout=10)
             return True
         except:
             return False
@@ -362,7 +362,7 @@ class Executor:
 
     def _go_to_object(self, observed):
         if observed != None:
-            self.robot.go_to_object(observed, distance_mm(70.0)).wait_for_completed()
+            self.robot.go_to_object(observed, distance_mm(70.0)).wait_for_completed(timeout=20)
             return True
         else:
             return False

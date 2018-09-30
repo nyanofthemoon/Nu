@@ -551,7 +551,6 @@ class Emote:
     def idle():
         return SystemRandom().choice([
             cozmo.anim.Triggers.DroneModeIdle,
-            cozmo.anim.Triggers.CodeLabIdle,
             cozmo.anim.Triggers.CodeLabStaring,
             cozmo.anim.Triggers.GameSetupIdle,
             cozmo.anim.Triggers.IdleOnCharger,

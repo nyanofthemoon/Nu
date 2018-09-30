@@ -197,7 +197,7 @@ class Executor:
     def undock_from_charger(self):
         if self.is_charging() == True:
             self.robot.drive_off_charger_contacts(num_retries=3).wait_for_completed()
-            self.move_forward(5)
+        self.move_forward(3)
 
     def move_forward(self, distance_in=1.0):
         self.robot.drive_straight(distance_inches(distance_in), speed_mmps(25)).wait_for_completed()

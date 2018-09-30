@@ -200,8 +200,10 @@ class Executor:
         self.set_lift_height(0.0)
 
     def undock_from_charger(self):
-        if self.is_charging() or self.robot.is_on_charger:
-            self.robot.drive_off_charger_contacts()
+        if self.is_charging():
+            self.robot.drive_off_charger_contacts().wait_for_completed()
+        if self.robot.is_on_charger:
+            self.move_forward(4.5)
 
     def move_forward(self, distance=1.0, speed=25):
         self.robot.drive_straight(distance_inches(distance), speed_mmps(speed))

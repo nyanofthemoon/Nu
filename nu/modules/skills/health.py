@@ -40,9 +40,11 @@ class Health:
             if self.battery_is_high():
                 self.attempts = 0
                 payload = Skill.payload()
-                payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER, sleep=5))
+                payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
+                payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER, sleep=3))
                 payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.WAKEUP}, 5))
                 payload.append(Skill.message(ExecutableActions.MOVE_FORWARD, {'distance': 4.5}, 5))
+                payload.append(Skill.message(ExecutableActions.DISABLE_FREEPLAY))
                 payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
                 Skill.enqueue(__class__, payload, )
             else:

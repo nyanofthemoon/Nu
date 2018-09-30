@@ -199,14 +199,19 @@ class Executor:
         self.set_lift_height(0.0)
 
     def undock_from_charger(self):
-        if self.robot.is_on_charger == True or self.is_charging():
-          self.robot.drive_off_charger_contacts(in_parallel=True).wait_for_completed(timeout=2)
+        self.robot.abort_all_actions()
+        time.sleep(0.5)
+        if self.is_charging():
+            logger.error('FOUND CHARGING   CHARGING')
+            self.robot.stop_all_motors()
+            time.sleep(0.5)
+            self.robot.drive_off_charger_contacts().wait_for_completed(timeout=2)
 
     def move_forward(self, distance=1.0, speed=25):
-        self.robot.drive_straight(distance_inches(distance), speed_mmps(speed), in_parallel=True).wait_for_completed(timeout=2)
+        self.robot.drive_straight(distance_inches(distance), speed_mmps(speed)).wait_for_completed(timeout=2)
 
     def move_backward(self, distance=1.0, speed=25):
-        self.robot.drive_straight(distance_inches((distance*-1)), speed_mmps(speed), in_parallel=True).wait_for_completed(timeout=2)
+        self.robot.drive_straight(distance_inches((distance*-1)), speed_mmps(speed)).wait_for_completed(timeout=2)
 
     def go_to_charger(self):
         if (self.robot.is_on_charger == False):
@@ -552,7 +557,6 @@ class Emote:
         return SystemRandom().choice([
             cozmo.anim.Triggers.DroneModeIdle,
             cozmo.anim.Triggers.CodeLabStaring,
-            cozmo.anim.Triggers.GameSetupIdle,
             cozmo.anim.Triggers.IdleOnCharger,
             cozmo.anim.Triggers.CozmoSaysIdle,
             cozmo.anim.Triggers.MeetCozmoScanningIdle,

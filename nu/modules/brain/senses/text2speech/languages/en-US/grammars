@@ -4,7 +4,7 @@
 
 grammar structure;
 
-public <callout> = (okay | ok | hokey | hey | hi | hello)+ (meca | mecca);
+public <callout> = (okay | ok | hokey | hey | hi | hello)* (meca | mecca)+;
 
 # Commands
 public <command> = (<charger>)+;

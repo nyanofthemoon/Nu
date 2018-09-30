@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-clear & python -m nu -v
+cd /home/pi/Nu & python3.7 -m nu

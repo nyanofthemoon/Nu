@@ -1,0 +1,19 @@
+[Unit]
+Description=Nu
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/home/pi/Nu/run.sh
+ExecStop=/bin/kill -s TERM $MAINPID
+PIDFile=/home/pi/Nu/nu.pid
+TimeoutStopSec=0
+Restart=always
+User=pi
+UMask=007
+ReadOnlyDirectories=/
+ReadWriteDirectories=/home/pi/Nu
+
+[Install]
+WantedBy=multi-user.target
+Alias=nu.service

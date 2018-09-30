@@ -200,7 +200,7 @@ class Executor:
 
     def undock_from_charger(self):
         if self.robot.is_on_charger == True or self.is_charging():
-            self.robot.drive_off_charger_contacts(num_retries=3).wait_for_completed()
+            self.robot.drive_off_charger_contacts(in_parallel=True, num_retries=5).wait_for_completed()
             self.move_forward(4.5)
 
     def move_forward(self, distance_in=1.0):

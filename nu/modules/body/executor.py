@@ -200,6 +200,8 @@ class Executor:
 
     def undock_from_charger(self):
         if self.robot.is_on_charger == True or self.is_charging():
+            self.robot.stop_all_motors()
+            self.robot.abort_all_actions(log_abort_messages=True)
             self.robot.drive_off_charger_contacts(in_parallel=True, num_retries=5).wait_for_completed()
             self.move_forward(4.5)
 

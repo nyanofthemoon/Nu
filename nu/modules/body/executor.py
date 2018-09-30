@@ -23,6 +23,7 @@ class Executor:
         self.robot.world.disconnect_from_cubes()
         self.robot.enable_stop_on_cliff(enable=True)
         self.robot.enable_all_reaction_triggers(should_enable=True)
+        self.disable_freeplay()
         self.set_repair_needs(self.constitution)
         self.set_energy_needs(self.energy)
         self.set_play_needs(self.happy)

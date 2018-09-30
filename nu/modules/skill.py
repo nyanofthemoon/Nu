@@ -24,8 +24,8 @@ class Skill:
         }
 
     @staticmethod
-    def enqueue(child, payload=[], freeplay=True):
-        SMemoryQueue.put(child.__name__, child.PRIORITY, (time() + child.EXPIRATION), payload, freeplay)
+    def enqueue(child, payload=[]):
+        SMemoryQueue.put(child.__name__, child.PRIORITY, (time() + child.EXPIRATION), payload)
 
     @staticmethod
     def handle_failure(action, params):

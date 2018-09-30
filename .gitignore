@@ -2,3 +2,15 @@ build
 dist
 nu.egg-info
 dump.rdb
+nu/__pycache__
+nu/modules/__pycache__
+nu/modules/body/__pycache__
+nu/modules/body/senses/__pycache__
+nu/modules/brain/__pycache__
+nu/modules/brain/senses/__pycache__/
+nu/modules/brain/senses/text2speech/__pycache__
+nu/modules/query/__pycache__
+nu/modules/skills/__pycache__
+nu/modules/skills/obedience/__pycache__/
+nu/cozmo/__pycache__
+nu/cozmo/usbmux/__pycache__

@@ -4,14 +4,13 @@
 
 grammar structure;
 
+public <callout> = (okay | ok | hokey | hey | hi | hello)+ (meca | mecca);
+
+# Commands
+public <command> = (<charger>)+;
+public <charger> = (go to sleep | go to charger | take a nap | take a break | wake up | get up | stop sleeping)+;
+
+# Shorts
+
 public <answer> = (yes | yep | no | nope | maybe)+;
-
-public <callout> = <nu>;
-<nu> = (okay | ok | hokey | hey | hi | hello) (nu | new | knew)+;
-
-public <command> = (<move> | <turn> | <charger> | <cube> | <silence>)+;
-<move> = (move forward | go straight | move backward | go back)+;
-<turn> = (turn around | turn left | turn right)+;
-<charger> = (go to sleep | go to charger | take a nap | take a break)+;
-<cube> = (find a cube | take the cube | drop the cube | throw the cube | keep the cube)+;
-<silence> = (be silent | be quiet | silence | shut up)+;
+public <question> = (what | where | why | how)+;

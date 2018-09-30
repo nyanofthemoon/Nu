@@ -17,9 +17,6 @@ class Operator:
     def handle_entry(self, entry: SMemoryEntry):
         if entry.expiry >= time():
 
-            if entry.freeplay == False:
-                self.executor.disable_freeplay()
-
             logger.info('Operator running ' + str(entry.name) + ' with updates')
 
             op_result = None
@@ -45,8 +42,6 @@ class Operator:
                 else:
                     logger.debug('Operator ending with handle_failure')
                     getattr(globals()[op_class], 'handle_failure')(op_action, op_params)
-
-            self.executor.enable_freeplay()
 
         else:
             logger.info('Operator expired ' + str(entry.name))

@@ -1,10 +1,10 @@
 # Interface to robot
 
-import cozmo
 import time
-from cozmo.util import degrees, distance_inches, distance_mm, speed_mmps, radians
 import asyncio
 import logging
+from nu import cozmo
+from nu.cozmo.util import degrees, distance_inches, distance_mm, speed_mmps, radians
 from random import SystemRandom
 
 logger = logging.getLogger()
@@ -13,21 +13,29 @@ logger = logging.getLogger()
 class Executor:
 
     def __init__(self, robot: cozmo.robot.Robot):
+        self.constitution = 1
+        self.energy = 1
+        self.happy = 1
         self.robot = robot
         self.robot.world.auto_disconnect_from_cubes_at_end()
         self.robot.world.disconnect_from_cubes()
-        self.disable_freeplay()
-        self.set_repair_needs()
-        self.set_energy_needs()
-        self.set_play_needs()
+        self.robot.enable_stop_on_cliff(enable=True)
+        self.robot.enable_all_reaction_triggers(should_enable=True)
+        self.set_repair_needs(self.constitution)
+        self.set_energy_needs(self.energy)
+        self.set_play_needs(self.happy)
         self.use_quiet_voice()
+        self.become_idle()
 
+    # 0 = 'broken', 1 = 'fully repaired'
     def set_repair_needs(self, value=1):
         self.robot.set_needs_levels(value)
 
+    # 0 = 'no-energy', 1 = 'full energy'
     def set_energy_needs(self, value=1):
         self.robot.set_needs_levels(value)
 
+    # 0 = 'bored', 1 = 'happy'
     def set_play_needs(self, value=1):
         self.robot.set_needs_levels(value)
 
@@ -51,20 +59,44 @@ class Executor:
 
     def disable_freeplay(self):
         if self.robot.is_freeplay_mode_active == True:
-            self.robot.enable_all_reaction_triggers(should_enable=False)
-            self.robot.enable_stop_on_cliff(enable=False)
+            self.robot.stop_freeplay_behaviors()
             self.robot.enable_facial_expression_estimation(enable=True)
             self.robot.enable_freeplay_cube_lights(enable=False)
-            self.robot.stop_all_motors()
-            self.robot.stop_freeplay_behaviors()
 
     def enable_freeplay(self):
         if self.robot.is_freeplay_mode_active == False:
-            self.robot.enable_all_reaction_triggers(should_enable=True)
-            self.robot.enable_stop_on_cliff(enable=True)
             self.robot.enable_facial_expression_estimation(enable=False)
             self.robot.enable_freeplay_cube_lights(enable=True)
             self.robot.start_freeplay_behaviors()
+
+    def become_idle(self):
+        self.freeze()
+        self._update_mood()
+        self.do_look_around_at_faces()
+
+    def hiccups(self):
+        self.robot.execute_custom_behavior(30)
+
+    #def sing(self, song=102):
+    #    self.robot.execute_custom_behavior(song)  # SING BINGO
+
+    def acknowledge(self):
+        self.robot.execute_custom_behavior(158)
+        time.sleep(2)
+        self.freeze()
+
+    def freeze(self):
+        self.robot._set_none_behavior()
+
+    # Will dance for duration seconds
+    def dance(self, duration=10):
+        self.robot.execute_custom_behavior(7)
+        time.sleep(duration)
+        self.freeze()
+
+    # Will look at closest face and rush to it, idefinitely.
+    def rush_to_visible_person(self):
+        self.robot.execute_custom_behavior(159)
 
     def speak_slowly(self, text, excited=False):
         self.robot.say_text(text, in_parallel=True, num_retries=1, voice_pitch=-0.15, duration_scalar=1.25, play_excited_animation=excited).wait_for_completed()
@@ -105,31 +137,34 @@ class Executor:
 
     def open_lights(self, color='white'):
         # 'green', 'red', 'blue', 'white'
-        self.robot.set_backpack_lights(light2=color, light3=color, light4=color)
+        color = color + '_light'
+        light = cozmo.lights[color].flash()
+        self.robot.set_backpack_lights(light1=light, light2=light, light3=light, light4=light, light5=light)
 
     def close_lights(self):
         self.robot.set_backpack_lights_off()
 
-    def open_side_lights(self):
-        self.robot.set_backpack_lights(light1='red', light5='red')
+    def open_side_lights(self, color='red'):
+        light = cozmo.lights[color]
+        self.robot.set_backpack_lights(light1=light, light5=light)
 
     def close_side_lights(self):
         self.robot.set_backpack_lights(light1=cozmo.lights.off_light, light5=cozmo.lights.off_light)
 
-    def open_front_light(self,  color='white'):
-        self.robot.set_backpack_lights(light2=color)
+    def open_front_light(self, color='white'):
+        self.robot.set_backpack_lights(light2=cozmo.lights[color])
 
     def close_front_light(self):
         self.robot.set_backpack_lights(light2=cozmo.lights.off_light)
 
     def open_center_light(self,  color='white'):
-        self.robot.set_backpack_lights(light3=color)
+        self.robot.set_backpack_lights(light3=cozmo.lights[color])
 
     def close_center_light(self):
         self.robot.set_backpack_lights(light3=cozmo.lights.off_light)
 
     def open_rear_light(self, color='white'):
-        self.robot.set_backpack_lights(light4=color)
+        self.robot.set_backpack_lights(light4=cozmo.lights[color])
 
     def close_rear_light(self):
         self.robot.set_backpack_lights(light4=cozmo.lights.off_light)
@@ -157,9 +192,9 @@ class Executor:
         self.set_lift_height(0.0)
 
     def undock_from_charger(self):
-        self.robot.drive_off_charger_contacts().wait_for_completed()
-        time.sleep(0.5)
-        self.move_forward()
+        if self.is_charging() == True:
+            self.robot.drive_off_charger_contacts(num_retries=3).wait_for_completed()
+            self.move_forward(5)
 
     def move_forward(self, distance_in=1.0):
         self.robot.drive_straight(distance_inches(distance_in), speed_mmps(25)).wait_for_completed()
@@ -215,6 +250,44 @@ class Executor:
 
     def do_look_for_face(self):
         return self.robot.start_behavior(cozmo.behavior.BehaviorTypes.FindFaces)
+
+    # Will look around and look at faces, indefinitely.
+    def do_look_around_at_faces(self):
+        self.robot.execute_custom_behavior(27)
+
+    def _update_mood(self):
+        happy = self.happy
+        energy = self.energy
+        constitution = self.constitution
+        animation = Emote.idle()
+        if constitution < 0.5:
+            animation = cozmo.anim.Triggers.NeedsSevereLowRepairIdle
+        if energy < 0.5:
+            animation = cozmo.anim.Triggers.NeedsSevereLowRepairIdle
+        if happy < 0.5:
+            animation = cozmo.anim.Triggers.NothingToDoBoredIdle
+        self.robot.set_idle_animation(animation)
+
+    def constitution(self):
+        return self.constitution
+
+    def update_constitution(self, amount: 0.25):
+        self.set_repair_needs( (self.constitution + amount) )
+        self._update_mood()
+
+    def energy(self):
+        return self.energy
+
+    def update_energy(self, amount: 0.25):
+        self.set_energy_needs( (self.energy + amount) )
+        self._update_mood()
+
+    def happiness(self):
+        return self.happy
+
+    def update_happiness(self, amount: 0.25):
+        self.set_play_needs( (self.happy + amount) )
+        self._update_mood()
 
     ###
     def dock_and_recharge(self):
@@ -342,6 +415,18 @@ class ExecutableActions:
     USE_LOUD_VOICE = 'use_loud_voice'
     DO_LOOK_AROUND = 'do_look_around'
     DO_LOOK_FOR_PERSON = 'do_look_for_face'
+    DO_LOOK_AROUND_AT_PEOPLE = 'do_look_around_at_faces'
+    ENABLE_FREEPLAY = 'enable_freeplay'
+    DISABLE_FREEPLAY = 'disable_freeplay'
+    ACKNOWLEDGE = 'acknowledge'
+    DANCE = 'dance'
+    FREEZE = 'freeze'
+    RUSH_TO_VISIBLE_PERSON = 'rush_to_visible_person'
+    HICCUPS = 'hiccups'
+    BECOME_IDLE = 'become_idle'
+    UPDATE_CONSTITUTION = 'update_constitution'
+    UPDATE_ENERGY = 'update_energy'
+    UPDATE_HAPPINESS = 'update_happiness'
 
 
 class ExecutableSingleEmotes:
@@ -445,8 +530,11 @@ class Emote:
             cozmo.anim.Triggers.DroneModeIdle,
             cozmo.anim.Triggers.CodeLabIdle,
             cozmo.anim.Triggers.CodeLabStaring,
+            cozmo.anim.Triggers.GameSetupIdle,
             cozmo.anim.Triggers.IdleOnCharger,
+            cozmo.anim.Triggers.CozmoSaysIdle,
             cozmo.anim.Triggers.MeetCozmoScanningIdle,
+            cozmo.anim.Triggers.InteractWithFaceTrackingIdle,
             cozmo.anim.Triggers.SparkIdle
         ])
 

@@ -1,10 +1,12 @@
 # https://gist.github.com/raproenca/ed1ab47c47da246512ef4d2f19cf2611
 # React to recognized voice commands
 
-import logging
 from ast import literal_eval
+import logging
+from time import time
 from nu.modules.skill import Skill
 from nu.modules.config import skill_config
+from nu.modules.body.executor import ExecutableActions, ExecutableSingleEmotes, ExecutableChainEmotes
 
 logger = logging.getLogger()
 config = skill_config()
@@ -46,34 +48,47 @@ class Obedience:
     SUBSCRIPTIONS = ['BrainSenseText2Speech']
     PRIORITY = int(config.get('ObedienceSkill', 'priority'))
     EXPIRATION = int(config.get('ObedienceSkill', 'expiration'))
+    INTEREST = int(config.get('ObedienceSkill', 'interest'))
+    SLEEP_COMMANDS = ['go to sleep', 'go to charger', 'take a nap', 'take a break']
+    WAKEUP_COMMANDS = ['wake up', 'get up', 'stop sleeping']
 
-    #languages = []
-    #language = 'en'
-
-    #def __init__(self):
-    #    # Load Languages
-        #for file in glob.glob('./languages/*.json'):
-        #    with open(file) as json_file:
-        #        self.languages.append(json.load(json_file))
-        #self.languages.sort(key=operator.itemgetter('id'))
+    def __init__(self):
+        self.listening = False
+        self.listening_until = 0
 
     def handle_message(self, message):
-        #data = message.get('data').decode()
         data = literal_eval(message.get('data').decode('utf-8'))
-        print(data.get('type'))
-        print(data.get('text'))
-        print(data.get('sentiment'))
-        #{'type': 'message', 'pattern': None, 'channel': b'sense.brain.text2speech', 'data': b"{'type': 'answer', 'text': 'nope', 'sentiment': {'polarity': 'neutral', 'perspective': 'neutral'}}"}
+        type = data.get('type')
+        text = data.get('text')
+        if type == 'callout':
+            self.listening = True
+            self.listening_until = time() + self.INTEREST
+            payload = Skill.payload()
+            payload.append(Skill.message(ExecutableActions.ACKNOWLEDGE))
+            payload.append(Skill.message(ExecutableActions.DO_LOOK_FOR_PERSON))
+            Skill.enqueue(__class__, payload)
+        elif self.listening == True:
+            payload = Skill.payload()
+            if time() <= self.listening_until:
+                if type == 'answer':
+                    payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': 'You answerred... ' + text + '!'}))
+                elif type == 'question':
+                    payload.append(Skill.message(ExecutableActions.SPEAK, {'text': 'You are asking... ' + text + '?'}))
+                elif type == 'command' and self.listening:
+                    if text in self.SLEEP_COMMANDS:
+                        payload.append(Skill.message(ExecutableActions.DOCK_AND_RECHARGE))
+                    elif text in self.WAKEUP_COMMANDS:
+                        payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
+                payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
+                Skill.enqueue(__class__, payload)
+            self.listening = False
+            self.listening_until = 0
 
     def handle_failure(self, action, params):
         return Skill.handle_failure(action, params)
 
     def handle_success(self, action, params):
         return Skill.handle_success(action, params)
-
-
-
-
 
 
 ObedienceSkill = Obedience()

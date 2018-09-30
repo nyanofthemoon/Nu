@@ -4,7 +4,7 @@ import logging
 import threading
 from distutils.util import strtobool
 from time import sleep
-import cozmo
+from nu import cozmo
 
 from .scheduler import Scheduler
 from .body import Executor
@@ -200,6 +200,7 @@ def cozmo_connect_callback(robot: cozmo.robot.Robot):
     logger.info('Initializing Skills ' + str(skills))
     runner.scheduleTasks(sensors, ex_sensors)
     runner.startScheduledTasks()
+
 
 def cozmo_disconnect_callback():
     global runner

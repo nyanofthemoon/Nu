@@ -40,8 +40,10 @@ class Clock:
             ])
 
             payload = Skill.payload()
+            payload.append(Skill.message(ExecutableActions.DISABLE_FREEPLAY))
             payload.append(Skill.message( ExecutableActions.SPEAK, {'text': datetime.fromtimestamp(self.current).strftime(text)} ))
-            Skill.enqueue(__class__, payload, freeplay=False)
+            payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
+            Skill.enqueue(__class__, payload)
             self._setNext()
 
     def handle_failure(self, action, params):

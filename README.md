@@ -18,16 +18,16 @@ Contributing to the Cozmo community! This framework allows cuztomizing the robot
 - [Redis 4.0](https://redis.io/download)
 - [Python 3.6.6](https://www.python.org/downloads)
 - [Cozmo SDK](http://cozmosdk.anki.com/docs)
-- `python setup.py install`
+- `python -m pip install --upgrade pip && python setup.py install` or
+- `python3.6.6 -m pip install missing_dependency`
 
 ## Usage 
 
 ### Launch
 - Place Cozmo on the charger and start the in-app SDK mode
 - Launch Redis using `redis-server`
-- Launch runner using `./run.sh` or `python -m nu -h`
+- Launch runner using `python -m nu -h` or `python3.6.6 -m nu -v`
 
 ## Contributing
 
 Coming soon. 
-

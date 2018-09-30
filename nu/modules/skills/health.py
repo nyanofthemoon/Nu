@@ -42,12 +42,13 @@ class Health:
                 payload = Skill.payload()
                 payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
                 payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.WAKEUP}))
-                Skill.enqueue(__class__, payload)
+                payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
+                Skill.enqueue(__class__, payload, )
             else:
                 if random() < .5:
                     payload = Skill.payload()
                     payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.SLEEP}))
-                    Skill.enqueue(__class__, payload, freeplay=False)
+                    Skill.enqueue(__class__, payload)
 
         if self.recharging == False:
             if self.battery_is_low():
@@ -61,6 +62,7 @@ class Health:
                     ])
                     payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.TIRED}))
                     payload.append(Skill.message(ExecutableActions.SPEAK_SLOW, {'text': text}))
+                    payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
                 else:
                     text = SystemRandom().choice([
                         "Where's my charger?",
@@ -70,19 +72,21 @@ class Health:
                     ])
                     payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': text}))
                     payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.UNHAPPY}))
+                    payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
                 payload.append(Skill.message(ExecutableActions.DOCK_AND_RECHARGE))
-                Skill.enqueue(__class__, payload, freeplay=False)
+                Skill.enqueue(__class__, payload)
 
     def handle_failure(self, action, params):
         payload = Skill.payload()
         payload.append(Skill.message( ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.UPSET}) )
-        Skill.enqueue(__class__, payload, freeplay=False)
+        Skill.enqueue(__class__, payload)
 
     def handle_success(self, action, params):
         if self.recharging == False:
             payload = Skill.payload()
-            payload.append(Skill.message( ExecutableActions.EMOTE_CHAIN, {'type': ExecutableChainEmotes.FALL_ASLEEP}) )
-            Skill.enqueue(__class__, payload, freeplay=False)
+            payload.append(Skill.message(ExecutableActions.DISABLE_FREEPLAY))
+            payload.append(Skill.message(ExecutableActions.EMOTE_CHAIN, {'type': ExecutableChainEmotes.FALL_ASLEEP}))
+            Skill.enqueue(__class__, payload)
 
 
 HealthSkill = Health()

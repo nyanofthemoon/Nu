@@ -1,6 +1,6 @@
 # Dock to recharge on low battery
 
-from random import SystemRandom, random
+from random import SystemRandom
 from distutils.util import strtobool
 from nu.modules.body.executor import ExecutableActions, ExecutableSingleEmotes, ExecutableChainEmotes
 from nu.modules.body import senses
@@ -45,10 +45,10 @@ class Health:
                 payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
                 Skill.enqueue(__class__, payload, )
             else:
-                if random() < .5:
-                    payload = Skill.payload()
-                    payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.SLEEP}))
-                    Skill.enqueue(__class__, payload)
+                payload = Skill.payload()
+                payload.append(Skill.message(ExecutableActions.FREEZE))
+                payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.SLEEP}))
+                Skill.enqueue(__class__, payload)
 
         if self.recharging == False:
             if self.battery_is_low():
@@ -78,13 +78,15 @@ class Health:
 
     def handle_failure(self, action, params):
         payload = Skill.payload()
-        payload.append(Skill.message( ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.UPSET}) )
+        payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
+        payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.UPSET}))
         Skill.enqueue(__class__, payload)
 
     def handle_success(self, action, params):
         if self.recharging == False:
             payload = Skill.payload()
             payload.append(Skill.message(ExecutableActions.DISABLE_FREEPLAY))
+            payload.append(Skill.message(ExecutableActions.FREEZE))
             payload.append(Skill.message(ExecutableActions.EMOTE_CHAIN, {'type': ExecutableChainEmotes.FALL_ASLEEP}))
             Skill.enqueue(__class__, payload)
 

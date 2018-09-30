@@ -89,6 +89,7 @@ class Executor:
 
     def freeze(self):
         self.robot._set_none_behavior()
+        self.robot.clear_idle_animation()
 
     # Will dance for duration seconds
     def dance(self, duration=10):

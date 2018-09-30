@@ -20,7 +20,7 @@ class Health:
     HIGH_VOLTAGE = float(config.get('HealthSkill', 'high'))
 
     def __init__(self):
-        self.voltage = __class__.HIGH_VOLTAGE
+        self.voltage = __class__.LOW_VOLTAGE
         self.recharging = False
         self.charger = True
         self.attempts = 0

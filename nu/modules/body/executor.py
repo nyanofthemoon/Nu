@@ -13,10 +13,12 @@ logger = logging.getLogger()
 class Executor:
 
     def __init__(self, robot: cozmo.robot.Robot):
+        self.robot = robot
+
+    def reset(self):
         self.constitution = 1
         self.energy = 1
         self.happy = 1
-        self.robot = robot
         self.robot.world.auto_disconnect_from_cubes_at_end()
         self.robot.world.disconnect_from_cubes()
         self.robot.enable_stop_on_cliff(enable=True)

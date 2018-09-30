@@ -126,17 +126,15 @@ class Runner:
         self.operator = Operator(self.executor)
 
     def stopLogicalOperator(self):
-        # @TODO
-        # self.operator = None
+        self.operator = None
         return True
 
     def startPhysicalExecutor(self, robot: cozmo.robot.Robot):
-        # @TODO
         self.executor = Executor(robot)
+        self.executor.reset()
         return True
 
     def stopPhysicalExecutor(self):
-        # @TODO
         self.executor = None
         return True
 

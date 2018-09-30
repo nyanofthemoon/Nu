@@ -2,6 +2,7 @@ build
 dist
 nu.egg-info
 dump.rdb
+log.txt
 nu/__pycache__
 nu/modules/__pycache__
 nu/modules/body/__pycache__

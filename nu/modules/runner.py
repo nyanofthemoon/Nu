@@ -66,11 +66,14 @@ class Runner:
     def stopLongTermMemory(self):
         return True
 
+    def bindRandomBehavior(self):
+        self.scheduler.add(int(runnerConfig.get('options', 'RandomBehavior')), self.executor._randomBehaviorCallback)
+
     def bindSensoryCallback(self, robot: cozmo.robot.Robot, sensors):
         if 'BodySenseAirborne' in sensors:
             self.scheduler.add(int(senseConfig.get('refresh', 'BodySenseAirborne'))/2, self._sensorCallbackBodySenseAirborne)
         if 'BodySenseBattery' in sensors:
-            self.scheduler.add(int(senseConfig.get('refresh', 'BodySenseBattery'))/2, self._sensorCallbackBodySenseBattery)
+            self.scheduler.add(int(senseConfig.get('refresh', 'BodySenseBattery')), self._sensorCallbackBodySenseBattery)
         if 'BodySenseCliff' in sensors:
             self.scheduler.add(int(senseConfig.get('refresh', 'BodySenseCliff'))/2, self._sensorCallbackBodySenseCliff)
         if 'BodySenseFalling' in sensors:
@@ -80,7 +83,7 @@ class Runner:
         if 'BodySensePet' in sensors:
             self.scheduler.add(int(senseConfig.get('refresh', 'BodySensePet'))/2, self._sensorCallbackBodySensePet)
         if 'BodySenseRecharging' in sensors:
-            self.scheduler.add(int(senseConfig.get('refresh', 'BodySenseRecharging'))/2, self._sensorCallbackBodySenseRecharging)
+            self.scheduler.add(int(senseConfig.get('refresh', 'BodySenseRecharging')), self._sensorCallbackBodySenseRecharging)
         if 'BodySenseVision' in sensors:
             self.scheduler.add(int(senseConfig.get('refresh', 'BodySenseVision'))/2, self._sensorCallbackBodySenseVision)
         if 'BrainSenseSound' in sensors:
@@ -101,7 +104,7 @@ class Runner:
     def _sensorCallbackBodySensePet(self):
         BodySensePet.set(str(self.executor.seen_pet()))
     def _sensorCallbackBodySenseRecharging(self):
-        BodySenseRecharging.set(str(self.executor.is_charging()))
+        BodySenseRecharging.set(str({'charging': self.executor.is_charging(), 'on_charger': self.executor.is_on_charger()}))
     def _sensorCallbackBodySenseVision(self):
         BodySenseVision.set(str(self.executor.last_seen_image()))
 
@@ -195,6 +198,7 @@ def cozmo_connect_callback(robot: cozmo.robot.Robot):
     logger.info('Excluding Sensors ' + str(ex_sensors))
     runner.bindSensoryCallback(robot, sensors)
     runner.bindMessageCallback(skills)
+    runner.bindRandomBehavior()
     logger.info('Initializing Skills ' + str(skills))
     runner.scheduleTasks(sensors, ex_sensors)
     runner.startScheduledTasks()

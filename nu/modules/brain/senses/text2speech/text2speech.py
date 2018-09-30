@@ -79,7 +79,7 @@ class Text2Speech:
     @staticmethod
     def parse(selfR, audio):
         try:
-            raw_data = audio.get_raw_data(convert_rate=16000, convert_width=2)
+            raw_data = audio.get_raw_data(convert_rate=32000, convert_width=2)
             decodedType = None
             decodedValue = None
             # Using Sphynx Grammars

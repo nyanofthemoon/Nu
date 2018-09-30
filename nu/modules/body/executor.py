@@ -5,7 +5,7 @@ import asyncio
 import logging
 from nu import cozmo
 from nu.cozmo.util import degrees, distance_inches, distance_mm, speed_mmps, radians
-from random import SystemRandom
+from random import SystemRandom, randint
 
 logger = logging.getLogger()
 
@@ -19,6 +19,7 @@ class Executor:
         self.constitution = 1
         self.energy = 1
         self.happy = 1
+        self.ignore_random_behaviors = False
         self.robot.world.auto_disconnect_from_cubes_at_end()
         self.robot.world.disconnect_from_cubes()
         self.robot.enable_stop_on_cliff(enable=True)
@@ -29,6 +30,13 @@ class Executor:
         self.set_play_needs(self.happy)
         self.use_quiet_voice()
         self.become_idle()
+
+    def enable_random_behaviors(self):
+        self.ignore_random_behaviors = False
+
+    def disable_random_behaviors(self):
+        self.ignore_random_behaviors = True
+
 
     # 0 = 'broken', 1 = 'fully repaired'
     def set_repair_needs(self, value=1):
@@ -44,6 +52,9 @@ class Executor:
 
     def is_charging(self):
         return self.robot.is_charging
+
+    def is_on_charger(self):
+        return self.robot.is_on_charger
 
     def read_battery(self):
         return self.robot.battery_voltage
@@ -81,11 +92,88 @@ class Executor:
         self._update_mood()
         self.do_look_around_at_faces()
 
+    def _randomBehaviorCallback(self):
+        if self.ignore_random_behaviors == False:
+            logger.info('Switching Behavior')
+            self.disable_freeplay()
+            self.freeze()
+            self._update_mood()
+            SystemRandom().choice([
+                self.guard,
+                self.fistbump,
+                self.search_for_cube,
+                self.become_idle,
+                self.hiccups,
+                self.enable_freeplay,
+                self.go_to_any_cube,
+                self.do_look_around,
+                self.do_look_for_face,
+                self.sing,
+                self.do_look_around_at_faces,
+                self.rush_to_visible_person,
+                self.go_to_charger,
+                self.look_in_place_for_unknown,
+                self.visit_interesting_edge,
+                self.interact_with_faces,
+                self.knock_over_cubes,
+                self.cube_workout,
+                self.pick_a_cube,
+                self.pick_a_cube_to_stack,
+                self.wheelie,
+                self.pounce_on_motion,
+                self.stack_blocks,
+                self.roll_block_on_side
+            ])()
+
+    def roll_block_on_side(self):
+        self.robot.execute_custom_behavior(97)
+
+    def stack_blocks(self):
+        self.robot.execute_custom_behavior(157)
+
+    def pounce_on_motion(self):
+        self.robot.execute_custom_behavior(150)
+
+    def pick_a_cube_to_stack(self):
+        self.robot.execute_custom_behavior(148)
+
+    def pick_a_cube(self):
+        self.robot.execute_custom_behavior(146)
+
+    def cube_workout(self):
+        self.robot.execute_custom_behavior(140)
+
+    def knock_over_cubes(self):
+        self.robot.execute_custom_behavior(143)
+
+    def interact_with_faces(self):
+        self.robot.execute_custom_behavior(41)
+
+    def visit_interesting_edge(self):
+        self.robot.execute_custom_behavior(40)
+
+    def look_in_place_for_unknown(self):
+        self.robot.execute_custom_behavior(36)
+
+    def fistbump(self):
+        self.robot.execute_custom_behavior(142)
+
+    def wheelie(self):
+        self.robot.execute_custom_behavior(149)
+
     def hiccups(self):
         self.robot.execute_custom_behavior(30)
 
-    #def sing(self, song=102):
-    #    self.robot.execute_custom_behavior(song)  # SING BINGO
+    def guard(self):
+        self.robot.execute_custom_behavior(29)
+
+    def sing(self, song=None):
+        if song == None:
+            song = randint(99, 137)
+        self.robot.execute_custom_behavior(song)
+
+    def search_for_cube(self):
+        self.robot.execute_custom_behavior(26)
 
     def acknowledge(self):
         self.robot.execute_custom_behavior(158)
@@ -201,18 +289,18 @@ class Executor:
 
     def undock_from_charger(self):
         if self.is_charging():
-            self.robot.drive_off_charger_contacts().wait_for_completed()
-        with self.robot.perform_off_charger():
-            self.robot.drive_straight(distance_inches(4.5), speed_mmps(25)).wait_for_completed()
+            self.robot.drive_off_charger_contacts(in_parallel=True, num_retries=1).wait_for_completed(timeout=1)
+        if self.is_on_charger():
+            self.robot.drive_straight(distance_inches(4.5), speed_mmps(25), in_parallel=True, num_retries=1).wait_for_completed(timeout=1)
 
     def move_forward(self, distance=1.0, speed=25):
-        self.robot.drive_straight(distance_inches(distance), speed_mmps(speed))
+        self.robot.drive_straight(distance_inches(distance), speed_mmps(speed)).wait_for_completed(timeout=1)
 
     def move_backward(self, distance=1.0, speed=25):
-        self.robot.drive_straight(distance_inches((distance*-1)), speed_mmps(speed))
+        self.robot.drive_straight(distance_inches((distance*-1)), speed_mmps(speed)).wait_for_completed(timeout=1)
 
     def go_to_charger(self):
-        if (self.robot.is_on_charger == False):
+        if (self.is_on_charger() == False):
             charger = async_run_until_complete(self._locate_charger())
             return self._go_to_object(charger)
         else:
@@ -440,6 +528,8 @@ class ExecutableActions:
     UPDATE_CONSTITUTION = 'update_constitution'
     UPDATE_ENERGY = 'update_energy'
     UPDATE_HAPPINESS = 'update_happiness'
+    ENABLE_RANDOM_BEHAVIORS = 'enable_random_behaviors'
+    DISABLE_RANDOM_BEHAVIORS = 'disable_random_behaviors'
 
 
 class ExecutableSingleEmotes:

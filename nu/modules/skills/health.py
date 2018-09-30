@@ -1,5 +1,6 @@
 # Dock to recharge on low battery
 
+from ast import literal_eval
 from random import SystemRandom
 from distutils.util import strtobool
 from nu.modules.body.executor import ExecutableActions, ExecutableSingleEmotes, ExecutableChainEmotes
@@ -19,8 +20,9 @@ class Health:
     HIGH_VOLTAGE = float(config.get('HealthSkill', 'high'))
 
     def __init__(self):
-        self.voltage = 0.0
+        self.voltage = __class__.HIGH_VOLTAGE
         self.recharging = False
+        self.charger = True
         self.attempts = 0
 
     def battery_is_low(self):
@@ -34,21 +36,21 @@ class Health:
         if channel == senses.BodySenseBattery.id():
             self.voltage = float(message.get('data').decode())
         elif channel == senses.BodySenseRecharging.id():
-            self.recharging = strtobool(message.get('data').decode())
+            data = literal_eval(message.get('data').decode('utf-8'))
+            self.recharging = data.get('charging')
+            self.charger = data.get('on_charger')
 
-        if self.recharging == True:
+        if self.recharging:
             if self.battery_is_high():
                 self.attempts = 0
                 payload = Skill.payload()
-                payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
-                payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER, sleep=3))
-                payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.WAKEUP}, 5))
-                payload.append(Skill.message(ExecutableActions.MOVE_FORWARD, {'distance': 4.5}, 5))
-                payload.append(Skill.message(ExecutableActions.DISABLE_FREEPLAY))
+                payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
                 payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
+                payload.append(Skill.message(ExecutableActions.ENABLE_RANDOM_BEHAVIORS))
                 Skill.enqueue(__class__, payload, )
             else:
                 payload = Skill.payload()
+                payload.append(Skill.message(ExecutableActions.DISABLE_RANDOM_BEHAVIORS))
                 payload.append(Skill.message(ExecutableActions.BECOME_ASLEEP))
                 Skill.enqueue(__class__, payload)
 
@@ -64,7 +66,6 @@ class Health:
                     ])
                     payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.UNHAPPY}))
                     payload.append(Skill.message(ExecutableActions.SPEAK_SLOW, {'text': text}))
-                    payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
                 else:
                     text = SystemRandom().choice([
                         "Where's my charger?",
@@ -74,8 +75,13 @@ class Health:
                     ])
                     payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': text}))
                     payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.TIRED}))
-                    payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
                 payload.append(Skill.message(ExecutableActions.DOCK_AND_RECHARGE))
+                Skill.enqueue(__class__, payload)
+            elif self.charger:
+                payload = Skill.payload()
+                payload.append(Skill.message(ExecutableActions.ENABLE_RANDOM_BEHAVIORS))
+                payload.append(Skill.message(ExecutableActions.MOVE_FORWARD, {'distance': 4}))
+                payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
                 Skill.enqueue(__class__, payload)
 
     def handle_failure(self, action, params):
@@ -86,7 +92,7 @@ class Health:
     def handle_success(self, action, params):
         if self.recharging == False:
             payload = Skill.payload()
-            payload.append(Skill.message(ExecutableActions.DISABLE_FREEPLAY))
+            payload.append(Skill.message(ExecutableActions.DISABLE_RANDOM_BEHAVIORS))
             payload.append(Skill.message(ExecutableActions.EMOTE_CHAIN, {'type': ExecutableChainEmotes.FALL_ASLEEP}))
             payload.append(Skill.message(ExecutableActions.BECOME_ASLEEP))
             Skill.enqueue(__class__, payload)

@@ -68,18 +68,17 @@ class Obedience:
             payload.append(Skill.message(ExecutableActions.DO_LOOK_FOR_PERSON))
             Skill.enqueue(__class__, payload)
         elif self.listening == True:
-            payload = Skill.payload()
             if time() <= self.listening_until:
+                payload = Skill.payload()
                 if type == 'answer':
                     payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': 'You answerred... ' + text + '!'}))
-                elif type == 'question':
-                    payload.append(Skill.message(ExecutableActions.SPEAK, {'text': 'You are asking... ' + text + '?'}))
-                elif type == 'command' and self.listening:
-                    if text in self.SLEEP_COMMANDS:
-                        payload.append(Skill.message(ExecutableActions.DOCK_AND_RECHARGE))
-                    elif text in self.WAKEUP_COMMANDS:
-                        payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
-                payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
+                #elif type == 'question':
+                #    payload.append(Skill.message(ExecutableActions.SPEAK, {'text': 'You are asking... ' + text + '?'}))
+                #elif type == 'command' and self.listening:
+                #    if text in self.SLEEP_COMMANDS:
+                #        payload.append(Skill.message(ExecutableActions.DOCK_AND_RECHARGE))
+                #    elif text in self.WAKEUP_COMMANDS:
+                #        payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
                 Skill.enqueue(__class__, payload)
             self.listening = False
             self.listening_until = 0

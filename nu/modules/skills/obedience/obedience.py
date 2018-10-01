@@ -58,20 +58,26 @@ class Obedience:
 
     def handle_message(self, message):
         data = literal_eval(message.get('data').decode('utf-8'))
-        type = data.get('type')
         text = data.get('text')
-        if type == 'callout':
-            self.listening = True
-            self.listening_until = time() + self.INTEREST
-            payload = Skill.payload()
-            payload.append(Skill.message(ExecutableActions.ACKNOWLEDGE))
-            payload.append(Skill.message(ExecutableActions.DO_LOOK_FOR_PERSON))
-            Skill.enqueue(__class__, payload)
-        elif self.listening == True:
-            if time() <= self.listening_until:
-                payload = Skill.payload()
-                if type == 'answer':
-                    payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': 'You answerred... ' + text + '!'}))
+        confidence = data.get('confidence')
+
+        payload = Skill.payload()
+        payload.append(Skill.message(ExecutableActions.ACKNOWLEDGE))
+        payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': 'I heard... ' + text + '!'}))
+        Skill.enqueue(__class__, payload)
+
+        #if type == 'callout':
+        #    self.listening = True
+        #    self.listening_until = time() + self.INTEREST
+        #    payload = Skill.payload()
+        #    payload.append(Skill.message(ExecutableActions.ACKNOWLEDGE))
+        #    payload.append(Skill.message(ExecutableActions.DO_LOOK_FOR_PERSON))
+        #    Skill.enqueue(__class__, payload)
+        #elif self.listening == True:
+        #    if time() <= self.listening_until:
+        #        payload = Skill.payload()
+        #        if type == 'answer':
+        #            payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': 'You answerred... ' + text + '!'}))
                 #elif type == 'question':
                 #    payload.append(Skill.message(ExecutableActions.SPEAK, {'text': 'You are asking... ' + text + '?'}))
                 #elif type == 'command' and self.listening:
@@ -79,9 +85,9 @@ class Obedience:
                 #        payload.append(Skill.message(ExecutableActions.DOCK_AND_RECHARGE))
                 #    elif text in self.WAKEUP_COMMANDS:
                 #        payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
-                Skill.enqueue(__class__, payload)
-            self.listening = False
-            self.listening_until = 0
+        #        Skill.enqueue(__class__, payload)
+        #    self.listening = False
+        #    self.listening_until = 0
 
     def handle_failure(self, action, params):
         return Skill.handle_failure(action, params)

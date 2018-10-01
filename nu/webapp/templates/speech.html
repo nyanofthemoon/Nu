@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+        body {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          overflow: hidden;
+          position: absolute;
+        }
+        div#status {
+          width: 80%;
+          height: 75%;
+        }
+        form#speech {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="status"></div>
+    <script>
+        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+        var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
+
+        var recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.continuous = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onspeechstart = function() {
+          setStatus('listening');
+        }
+
+        recognition.onspeechend = function() {
+          setStatus('not-listening');
+        }
+
+        recognition.onend = function() {
+          recognition.start();
+        }
+
+        recognition.onresult = function(event) {
+            publish(event.results[(event.results.length - 1)][0]);
+        }
+
+        function setStatus(status) {
+            var statusElement = document.getElementById('status');
+            if (status == 'listening') {
+              statusElement.style.color      = 'white';
+              statusElement.style.background = 'green';
+              statusElement.innerHTML        = 'Listening';
+            } else {
+              statusElement.style.color      = 'white';
+              statusElement.style.background = 'grey';
+              statusElement.innerHTML        = 'Not Listening';
+            }
+        }
+
+        function publish(result) {
+            if (result.confidence >= 0.75) {
+              var xhr = new XMLHttpRequest();
+              xhr.open('POST', '/speech', true);
+              xhr.setRequestHeader('Content-Type', 'application/json');
+              xhr.send(JSON.stringify({
+                text      : result.transcript,
+                confidence: result.confidence
+              }));
+            }
+        }
+
+        setStatus('not-listening');
+        recognition.start();
+    </script>
+</body>
+</html>

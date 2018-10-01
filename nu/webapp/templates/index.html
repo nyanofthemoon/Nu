@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ data.title }}</title>
+    <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          width: 100vw;
+          height: 100vh;
+          background: #DDD;
+        }
+        iframe#status {
+          width: 100%;
+          height: 25%;
+          background: #DDD;
+        }
+        iframe#speech {
+          width: 100%;
+          height: 75%;
+          background: #CCC;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="status" scrolling="no" frameborder="0" src="/status"></iframe>
+    <iframe id="speech" scrolling="no" frameborder="0" src="/speech"></iframe>
+</body>
+</html>

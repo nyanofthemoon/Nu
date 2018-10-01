@@ -30,7 +30,8 @@ setup(
       'PocketSphinx',
       'python-Levenshtein',
       'google-api-python-client',
-      'textblob'
+      'textblob',
+      'flask'
   ],
   zip_safe=False
 )

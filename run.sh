@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-cd /home/pi/Nu && python3.7 -m nu -vv
+adb devices & cd /home/pi/Nu && python3.7 -m nu -vv

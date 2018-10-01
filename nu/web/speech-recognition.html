@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   </head>
+   <body>
+         <h2>SpeechRecognition API</h2>
+         <textarea id="transcription" readonly rows="10" cols="84"></textarea>
+         <br />
+         <textarea id="confidence" readonly></textarea>
+      </div>
+
+      <script>
+
+      // https://developer.mozilla.org/en-US/docs/Web/API/SpeechGrammarList
+
+function hashCode(str) { // java String#hashCode
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+       hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+}
+
+function intToRGB(i){
+    var c = (i & 0x00FFFFFF)
+        .toString(16)
+        .toUpperCase();
+
+    return "00000".substring(0, 6 - c.length) + c;
+}
+
+         window.SpeechRecognition = window.SpeechRecognition        ||
+                                    window.webkitSpeechRecognition  ||
+                                    null;
+         var recognizer = new SpeechRecognition();
+         recognizer.lang = 'en-US';
+         recognizer.continuous = true;
+         recognizer.maxAlternatives = 1;
+
+         var transcription = document.getElementById('transcription');
+         var confidence = document.getElementById('confidence');
+
+         recognizer.addEventListener('end', function() {
+           recognizer.start();
+         });
+
+         recognizer.addEventListener('result', function(event) {
+           console.log(event.results[0][0]);
+           transcription.textContent = '';
+           confidence.textContent = event.results[0][0].confidence;
+           transcription.textContent = event.results[0][0].transcript;
+           var color = '#' + intToRGB(hashCode(transcription.textContent))
+           document.querySelector('body').style.backgroundColor = color; // (^.^)!
+           recognizer.stop();
+         });
+
+         recognizer.addEventListener('nomatch', function() {
+           console.log('nomatch')
+         });
+
+         recognizer.addEventListener('speechstart', function() {
+           console.log('speechstart');
+         });
+
+         recognizer.addEventListener('speechend', function() {
+           console.log('speechend');
+         });
+
+         /*
+         recognizer.addEventListener('speechstart', function() {
+           console.log('speechstart');
+         });
+
+         recognizer.addEventListener('audiostart', function() {
+           console.log('audiostart');
+         });
+
+         recognizer.addEventListener('audioend', function() {
+           console.log('audioend');
+         });
+
+         recognizer.addEventListener('soundstart', function() {
+           console.log('soundstart');
+         });
+
+         recognizer.addEventListener('soundend', function() {
+           console.log('soundend');
+         });
+
+         recognizer.addEventListener('speechend', function() {
+           console.log('speechend');
+         });
+
+         recognizer.addEventListener('nomatch', function() {
+           console.log('nomatch')
+         });
+
+         recognizer.addEventListener('error', function(event) {
+           console.log('error')
+           console.log(event);
+         });
+         */
+
+
+
+         recognizer.start();
+
+
+
+      </script>
+   </body>
+</html>

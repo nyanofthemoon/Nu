@@ -9,3 +9,4 @@ from .pressure import Pressure as BrainSensePressure
 from .sound import Sound as BrainSenseSound
 from .temperature import Temperature as BrainSenseTemperature
 from .text2speech import BrainSenseText2Speech
+from .webspeech2text import BrainSenseWebSpeech2Text

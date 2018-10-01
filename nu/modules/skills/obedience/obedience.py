@@ -45,7 +45,7 @@ def similar(a, b):
 
 class Obedience:
 
-    SUBSCRIPTIONS = ['BrainSenseText2Speech']
+    SUBSCRIPTIONS = ['BrainSenseWebSpeech2Text']
     PRIORITY = int(config.get('ObedienceSkill', 'priority'))
     EXPIRATION = int(config.get('ObedienceSkill', 'expiration'))
     INTEREST = int(config.get('ObedienceSkill', 'interest'))

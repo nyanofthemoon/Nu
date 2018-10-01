@@ -7,7 +7,7 @@ grammar structure;
 public <answer> = (oui | non)+;
 
 public <callout> = <nu>;
-<nu> = (ok | bonjour) nu;
+<nu> = (ok | bonjour) meta;
 
 public <command> = (<move> | <turn> | <charger> | <cube> | <silence>)+;
 <move> = (en avant | avance | en arrière | recule)+;

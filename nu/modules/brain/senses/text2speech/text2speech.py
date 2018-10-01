@@ -99,11 +99,10 @@ class Text2Speech:
                         decodedValue = str(hypothesis.hypstr)
                         break
             # Using Google Audio API
-            #if decodedValue == None:
-            #    decodedType = 'complex'
-            #    decodedValue = str(r.recognize_google(audio))
-            #    decodedSentiment = SentimentAnalyzer.evaluate(decodedValue)
+            if decodedValue == None:
+                decodedType = 'complex'
+                decodedValue = str(r.recognize_google(audio))
             if decodedValue != None:
-                Text2Speech.publish(decodedType, decodedValue, {'polarity': 'neutral', 'perspective': 'neutral'})
+                Text2Speech.publish(decodedType, decodedValue, SentimentAnalyzer.evaluate(decodedValue))
         except:
             return False

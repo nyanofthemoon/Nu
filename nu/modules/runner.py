@@ -179,7 +179,7 @@ def cozmo_connect_callback(robot: cozmo.robot.Robot):
             skills.append(name)
 
     sensors = []
-    ex_sensors = ['BrainSenseSound', 'BrainSenseText2Speech', 'BrainSenseWebSpeech2Text']
+    ex_sensors = ['BrainSenseSound', 'BrainSenseText2Speech', 'BrainSenseWebSpeech2Text', 'BrainSenseLanguage']
     for skill in skills:
         for sensor in getattr(globals()[skill], 'SUBSCRIPTIONS'):
             if sensor not in sensors:

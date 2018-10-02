@@ -8,3 +8,4 @@ from .query import SentimentAnalyzer
 from .runner import main_function
 from .sense import Sense
 from .skill import Skill
+from nu.modules.brain.senses import BrainSenseLanguage

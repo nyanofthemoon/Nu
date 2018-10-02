@@ -3,6 +3,7 @@ from .timestamp import Timestamp as BrainSenseTimestamp
 from .gyroscope import Gyroscope as BrainSenseGyroscope
 from .humidity import Humidity as BrainSenseHumidity
 from .joystick import Joystick as BrainSenseJoystick
+from .language import Language as BrainSenseLanguage
 from .location import Location as BrainSenseLocation
 from .magnetometer import Magnetometer as BrainSenseMagnetometer
 from .pressure import Pressure as BrainSensePressure

@@ -7,13 +7,10 @@ import logging
 from time import time
 from nu.modules.skill import Skill
 from nu.modules.config import skill_config
-from nu.modules.config import nu_config
-from nu.modules.body.executor import ExecutableActions, ExecutableSingleEmotes, ExecutableChainEmotes
-from nu.modules.query import SentimentAnalyzer
+from nu.modules.body.executor import ExecutableActions
 
 logger = logging.getLogger()
 skillConfig = skill_config()
-nuConfig = nu_config()
 
 # http://www.coli.uni-saarland.de/courses/LT1/2011/slides/Python-Levenshtein.html
 # http://stevehanov.ca/blog/index.php?id=114
@@ -49,7 +46,7 @@ def similar(a, b):
 
 class Obedience:
 
-    SUBSCRIPTIONS = ['BrainSenseWebSpeech2Text']
+    SUBSCRIPTIONS = ['BrainSenseLanguage']
     PRIORITY = int(skillConfig.get('ObedienceSkill', 'priority'))
     EXPIRATION = int(skillConfig.get('ObedienceSkill', 'expiration'))
     INTEREST = int(skillConfig.get('ObedienceSkill', 'interest'))
@@ -63,14 +60,16 @@ class Obedience:
     def handle_message(self, message):
         data = literal_eval(message.get('data').decode('utf-8'))
         text = data.get('text')
+        confidence = data.get('confidence')
         words = data.get('words')
-        #confidence = data.get('confidence')
-        logger.info('[Obedience] ' + text)
+        isCallout = data.get('callout')
+        isQuestion = data.get('question')
+        sentiment = data.get('sentiment')
 
         if self.listening == True:
             if time() <= self.listening_until:
                 # Evaluate commands.
-                if isQuestion(words):
+                if isQuestion == True:
                     question = getQuestion(words)
                     payload = Skill.payload()
                     payload.append(Skill.message(ExecutableActions.CLEAR_BEHAVIOR))
@@ -96,7 +95,10 @@ class Obedience:
 
             self.listening = False
         else:
-            self.listening = isCallout(words)
+            if isCallout != None:
+                self.listening = isCallout
+            else:
+                self.listening = False
             if self.listening:
                 self.listening_until = time() + self.INTEREST
                 payload = Skill.payload()
@@ -137,10 +139,6 @@ class Obedience:
         return Skill.handle_success(action, params)
 
 
-questionWords = ['what', "what'", 'where', "where'", 'how', "how'", 'why', 'will']
-def isQuestion(words):
-    return any(elem in words for elem in questionWords)
-
 questionTime = ['time']
 questionDate = ['date', 'day']
 questionWeather = ['weather', 'temperature', 'forecast', 'rain', 'snow', 'storm']
@@ -164,11 +162,6 @@ def getCommand(words, text):
         return 'sleep'
     else:
         return False
-
-
-nuName = nuConfig.get('self', 'name').casefold()
-def isCallout(words):
-    return nuName in words
 
 
 ObedienceSkill = Obedience()

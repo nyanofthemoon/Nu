@@ -1,5 +1,6 @@
 # sudo python3.7 app.py
 
+import re
 import redis
 from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
@@ -29,8 +30,12 @@ def speech():
         return render_template('speech.html', data=data)
     else:
         data = request.get_json()
-        storage.publish('sense.brain.webspeech2text', str(data))
-        return jsonify({})
+        if data != None:
+          words = re.sub(r'\b\w{,1}\b', '', data.get('text').casefold()).split()
+          uniqueWords = sorted(set(words), key=lambda x: words.index(x))
+          data['words'] = uniqueWords
+          storage.publish('sense.brain.webspeech2text', str(data))
+          return jsonify({})
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port='80')

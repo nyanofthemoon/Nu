@@ -37,7 +37,6 @@ class Executor:
     def disable_random_behaviors(self):
         self.ignore_random_behaviors = True
 
-
     # 0 = 'broken', 1 = 'fully repaired'
     def set_repair_needs(self, value=1):
         self.robot.set_needs_levels(value)
@@ -180,6 +179,9 @@ class Executor:
         time.sleep(2)
         self.freeze()
 
+    def clear_behavior(self):
+        self.robot._set_none_behavior()
+
     def freeze(self):
         self.robot._set_none_behavior()
         self.robot.clear_idle_animation()
@@ -195,13 +197,13 @@ class Executor:
         self.robot.execute_custom_behavior(159)
 
     def speak_slowly(self, text, excited=False):
-        self.robot.say_text(text, in_parallel=True, num_retries=1, voice_pitch=-0.15, duration_scalar=1.25, play_excited_animation=excited).wait_for_completed(timeout=5)
+        self.robot.say_text(text, in_parallel=True, num_retries=2, voice_pitch=-0.15, duration_scalar=1.25, play_excited_animation=excited).wait_for_completed()
 
     def speak(self, text, excited=False):
-        self.robot.say_text(text, in_parallel=True, num_retries=1, play_excited_animation=excited).wait_for_completed(timeout=5)
+        self.robot.say_text(text, in_parallel=True, num_retries=2, play_excited_animation=excited).wait_for_completed()
 
     def speak_quickly(self, text, excited=False):
-        self.robot.say_text(text, in_parallel=True, num_retries=1, voice_pitch=0.15, duration_scalar=0.75, play_excited_animation=excited).wait_for_completed(timeout=5)
+        self.robot.say_text(text, in_parallel=True, num_retries=2, voice_pitch=0.15, duration_scalar=0.75, play_excited_animation=excited).wait_for_completed()
 
     # http://cozmosdk.anki.com/docs/generated/cozmo.anim.html
     def emote_single(self, type):
@@ -530,6 +532,7 @@ class ExecutableActions:
     UPDATE_HAPPINESS = 'update_happiness'
     ENABLE_RANDOM_BEHAVIORS = 'enable_random_behaviors'
     DISABLE_RANDOM_BEHAVIORS = 'disable_random_behaviors'
+    CLEAR_BEHAVIOR = 'clear_behavior'
 
 
 class ExecutableSingleEmotes:
@@ -647,7 +650,6 @@ class Emote:
             cozmo.anim.Triggers.CodeLabStaring,
             cozmo.anim.Triggers.IdleOnCharger,
             cozmo.anim.Triggers.CozmoSaysIdle,
-            cozmo.anim.Triggers.MeetCozmoScanningIdle,
             cozmo.anim.Triggers.InteractWithFaceTrackingIdle,
             cozmo.anim.Triggers.SparkIdle
         ])

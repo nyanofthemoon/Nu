@@ -21,13 +21,34 @@ Contributing to the Cozmo community! This framework allows cuztomizing the robot
 - `python -m pip install --upgrade pip && python setup.py install` or
 - `python3.6.6 -m pip install missing_dependency`
 
+### Local
+- `cd` unto Nu project directory
+- Create self-signed certificate `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365`
+
+### Pi3
+- Install Nu project into directory `/home/pi`
+- `cd /home/pi/Nu`
+- Create self-signed certificate `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365`
+- Copy files from `nu/configs/init.d` into in `/etc/init.d`
+
 ## Usage 
 
-### Launch
+### Local
+- Connect iOS or Android device to your computer's USB port
 - Place Cozmo on the charger and start the in-app SDK mode
+- Launch ADB `adb-devices`
 - Launch Redis using `redis-server`
-- Launch runner using `python -m nu -h` or `python3.6.6 -m nu`
-- Launch verbose runner and log using `python3.7 -m nu -vv 2>&1 >& log.txt &`
+- `cd` unto Nu project directory
+- Launch Nu using `python -m nu -h` and `python nu/webapp/server.py`
+- Launch Nu verbose `python -m nu -vv 2>&1 >& log.txt &` and `python nu/webapp/server.py`
+
+### Pi3
+- Connect Android device to a Pi3 USB port
+- Place Cozmo on the charger and start the in-app SDK mode
+- Launch ADB `adb-devices`
+- Launch Redis using `systemctl start redis-server`
+- Launch Nu using `systemctl start nu` and `systemctl start nu-webapp`
+- Stop using `systemctl stop nu` and `systemctl stop nu-webapp`
 
 ## Contributing
 

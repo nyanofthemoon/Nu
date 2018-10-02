@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setup(
   name='nu',
-  version='0.1.0',
+  version='0.2.0',
   packages=['nu'],
   author='Nyan Of The Moon',
   author_email='nyanofthemoon@gmail.com',
@@ -31,7 +31,8 @@ setup(
       'python-Levenshtein',
       'google-api-python-client',
       'textblob',
-      'flask'
+      'flask',
+      'pyopenssl'
   ],
   zip_safe=False
 )

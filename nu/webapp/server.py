@@ -38,4 +38,4 @@ def speech():
           return jsonify({})
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port='80')
+    app.run(debug=False, host='0.0.0.0', port='443', ssl_context=('/home/pi/Nu/cert.pem', '/home/pi/Nu/key.pem'))

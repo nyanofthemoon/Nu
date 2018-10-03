@@ -40,7 +40,7 @@ nuSimilarNames = nuConfig.get('self', 'similar').split(',')
 def isCallout(words):
     return any(elem in words for elem in nuSimilarNames)
 
-questionWords = ['what', "what'", 'where', "where'", 'how', "how'", 'why', 'will']
+questionWords = ['what', "what'", 'where', "where'", 'how', "how'", 'why']
 def isQuestion(words):
     return any(elem in words for elem in questionWords)
 

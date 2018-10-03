@@ -19,6 +19,7 @@ class Executor:
         self.constitution = 1
         self.energy = 1
         self.happy = 1
+        self.disable_freeplay()
         self.robot.world.auto_disconnect_from_cubes_at_end()
         self.robot.world.disconnect_from_cubes()
         self.robot.enable_stop_on_cliff(enable=True)
@@ -26,7 +27,6 @@ class Executor:
         self.set_repair_needs(self.constitution)
         self.set_energy_needs(self.energy)
         self.set_play_needs(self.happy)
-        self.disable_freeplay()
         self.use_quiet_voice()
         self.become_idle()
 

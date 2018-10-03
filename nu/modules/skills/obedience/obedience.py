@@ -58,6 +58,7 @@ class Obedience:
         self.listening_until = 0
 
     def handle_message(self, message):
+
         data = literal_eval(message.get('data').decode('utf-8'))
         text = data.get('text')
         confidence = data.get('confidence')
@@ -66,7 +67,7 @@ class Obedience:
         isQuestion = data.get('question')
         sentiment = data.get('sentiment')
 
-        if self.listening == True:
+        if self.listening == True and isCallout == False:
             if time() <= self.listening_until:
                 # Evaluate commands.
                 if isQuestion == True:
@@ -77,10 +78,10 @@ class Obedience:
                         payload.append(Skill.message(ExecutableActions.SPEAK, {'text': "It's " + strftime("%-I %-M %p", localtime()) + '.'}))
                     elif question == 'date':
                         payload.append(Skill.message(ExecutableActions.SPEAK, {'text': "It's " + strftime("%A %B %-d of %Y", localtime()) + '.'}))
-                    elif question == 'weather':
-                        payload.append(Skill.message(ExecutableActions.SPEAK, {'text': 'The weather looks good.'}))
+                    #elif question == 'weather':
+                    #    payload.append(Skill.message(ExecutableActions.SPEAK, {'text': 'The weather looks good.'}))
                     else:
-                        payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': "You said: " + text + '!'}))
+                        payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': "I don't know yet..."}))
                     Skill.enqueue(__class__, payload)
                 else:
                     command = getCommand(words, text)
@@ -91,6 +92,8 @@ class Obedience:
                             payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
                         elif command == 'sleep':
                             payload.append(Skill.message(ExecutableActions.BECOME_ASLEEP))
+                        elif command == 'sing':
+                            payload.append(Skill.message(ExecutableActions.SING))
                         Skill.enqueue(__class__, payload)
 
             self.listening = False
@@ -103,7 +106,7 @@ class Obedience:
                 self.listening_until = time() + self.INTEREST
                 payload = Skill.payload()
                 payload.append(Skill.message(ExecutableActions.CLEAR_BEHAVIOR))
-                payload.append(Skill.message(ExecutableActions.ACKNOWLEDGE, sleep=2))
+                payload.append(Skill.message(ExecutableActions.ACKNOWLEDGE))
                 Skill.enqueue(__class__, payload)
 
 
@@ -155,11 +158,14 @@ def getQuestion(words):
 
 commandWake = ['get up', 'wake up', 'stop sleeping']
 commandSleep = ['go to sleep', 'take a nap']
+commandSing = ['sing', 'song']
 def getCommand(words, text):
     if any(ext in text for ext in commandWake):
         return 'wake'
     if any(ext in text for ext in commandSleep):
         return 'sleep'
+    if any(ext in text for ext in commandSing):
+        return 'sing'
     else:
         return False
 

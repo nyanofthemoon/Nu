@@ -1,5 +1,6 @@
 # TextBlob
 # https://textblob.readthedocs.io/en/dev/quickstart.html#create-a-textblob
+# https://planspace.org/20150607-textblob_sentiment/
 
 from textblob import TextBlob
 from nu.modules.config import query_config
@@ -36,4 +37,9 @@ class SentimentAnalyzerApi:
         }
 
 
-SentimentAnalyzer = SentimentAnalyzerApi(queryConfig.get('SentimentAnalyzer', 'positiveThreshold'), queryConfig.get('SentimentAnalyzer', 'negativeThreshold'), queryConfig.get('SentimentAnalyzer', 'subjectiveThreshold'), queryConfig.get('SentimentAnalyzer', 'objectiveThreshold'))
+SentimentAnalyzer = SentimentAnalyzerApi(
+    float(queryConfig.get('SentimentAnalyzer', 'positiveThreshold')),
+    float(queryConfig.get('SentimentAnalyzer', 'negativeThreshold')),
+    float(queryConfig.get('SentimentAnalyzer', 'subjectiveThreshold')),
+    float(queryConfig.get('SentimentAnalyzer', 'objectiveThreshold'))
+)

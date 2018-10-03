@@ -19,23 +19,16 @@ class Executor:
         self.constitution = 1
         self.energy = 1
         self.happy = 1
-        self.ignore_random_behaviors = False
         self.robot.world.auto_disconnect_from_cubes_at_end()
         self.robot.world.disconnect_from_cubes()
         self.robot.enable_stop_on_cliff(enable=True)
         self.robot.enable_all_reaction_triggers(should_enable=True)
-        self.disable_freeplay()
         self.set_repair_needs(self.constitution)
         self.set_energy_needs(self.energy)
         self.set_play_needs(self.happy)
+        self.disable_freeplay()
         self.use_quiet_voice()
         self.become_idle()
-
-    def enable_random_behaviors(self):
-        self.ignore_random_behaviors = False
-
-    def disable_random_behaviors(self):
-        self.ignore_random_behaviors = True
 
     # 0 = 'broken', 1 = 'fully repaired'
     def set_repair_needs(self, value=1):
@@ -91,38 +84,36 @@ class Executor:
         self._update_mood()
         self.do_look_around_at_faces()
 
-    def _randomBehaviorCallback(self):
-        if self.ignore_random_behaviors == False:
-            logger.info('Switching Behavior')
-            self.disable_freeplay()
-            self.freeze()
-            self._update_mood()
-            SystemRandom().choice([
-                self.guard,
-                self.fistbump,
-                self.search_for_cube,
-                self.become_idle,
-                self.hiccups,
-                self.enable_freeplay,
-                self.go_to_any_cube,
-                self.do_look_around,
-                self.do_look_for_face,
-                self.sing,
-                self.do_look_around_at_faces,
-                self.rush_to_visible_person,
-                self.go_to_charger,
-                self.look_in_place_for_unknown,
-                self.visit_interesting_edge,
-                self.interact_with_faces,
-                self.knock_over_cubes,
-                self.cube_workout,
-                self.pick_a_cube,
-                self.pick_a_cube_to_stack,
-                self.wheelie,
-                self.pounce_on_motion,
-                self.stack_blocks,
-                self.roll_block_on_side
-            ])()
+    def become_random(self):
+        self.disable_freeplay()
+        self.freeze()
+        self._update_mood()
+        SystemRandom().choice([
+            self.guard,
+            self.fistbump,
+            self.search_for_cube,
+            self.become_idle,
+            self.hiccups,
+            self.enable_freeplay,
+            self.go_to_any_cube,
+            self.do_look_around,
+            self.do_look_for_face,
+            self.sing,
+            self.do_look_around_at_faces,
+            self.rush_to_visible_person,
+            self.go_to_charger,
+            self.look_in_place_for_unknown,
+            self.visit_interesting_edge,
+            self.interact_with_faces,
+            self.knock_over_cubes,
+            self.cube_workout,
+            self.pick_a_cube,
+            self.pick_a_cube_to_stack,
+            self.wheelie,
+            self.pounce_on_motion,
+            self.stack_blocks,
+            self.roll_block_on_side
+        ])()
 
     def roll_block_on_side(self):
         self.robot.execute_custom_behavior(97)
@@ -527,12 +518,12 @@ class ExecutableActions:
     HICCUPS = 'hiccups'
     BECOME_IDLE = 'become_idle'
     BECOME_ASLEEP = 'become_asleep'
+    BECOME_RANDOM = 'become_random'
     UPDATE_CONSTITUTION = 'update_constitution'
     UPDATE_ENERGY = 'update_energy'
     UPDATE_HAPPINESS = 'update_happiness'
-    ENABLE_RANDOM_BEHAVIORS = 'enable_random_behaviors'
-    DISABLE_RANDOM_BEHAVIORS = 'disable_random_behaviors'
     CLEAR_BEHAVIOR = 'clear_behavior'
+    SING = 'sing'
 
 
 class ExecutableSingleEmotes:

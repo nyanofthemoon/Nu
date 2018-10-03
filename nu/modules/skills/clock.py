@@ -18,7 +18,6 @@ class Clock:
     SUBSCRIPTIONS = ['BrainSenseTimestamp']
     PRIORITY = int(config.get('ClockSkill', 'priority'))
     EXPIRATION = int(config.get('ClockSkill', 'expiration'))
-    OWNER_NAME = nuConfig.get('owner', 'name')
 
     def __init__(self):
         self.announce_every = int(config.get('ClockSkill', 'every'))
@@ -32,17 +31,15 @@ class Clock:
         self.current = int(float(message.get('data').decode()))
         if self.current >= self.next:
             text = SystemRandom().choice([
-                __class__.OWNER_NAME + ", it's %I %p",
-                "It's %I %p already " + __class__.OWNER_NAME,
-                'Ding ding, the clock says %I %p',
-                'The clock ticks, it is %I %p'
-                'The time is now %I %p'
+                "It is now %-I %p",
+                "It's %-I %p already",
+                'Ding ding, the clock says %-I %p',
+                'The clock ticks, it is %-I %p'
+                'The time is now %-I %p'
             ])
 
             payload = Skill.payload()
-            payload.append(Skill.message(ExecutableActions.DISABLE_FREEPLAY))
-            payload.append(Skill.message( ExecutableActions.SPEAK, {'text': datetime.fromtimestamp(self.current).strftime(text)} ))
-            payload.append(Skill.message(ExecutableActions.ENABLE_FREEPLAY))
+            payload.append(Skill.message(ExecutableActions.SPEAK_SLOW, {'text': datetime.fromtimestamp(self.current).strftime(text)}))
             Skill.enqueue(__class__, payload)
             self._setNext()
 

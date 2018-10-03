@@ -66,9 +66,6 @@ class Runner:
     def stopLongTermMemory(self):
         return True
 
-    def bindRandomBehavior(self):
-        self.scheduler.add(int(runnerConfig.get('options', 'RandomBehavior')), self.executor._randomBehaviorCallback)
-
     def bindSensoryCallback(self, robot: cozmo.robot.Robot, sensors):
         if 'BodySenseAirborne' in sensors:
             self.scheduler.add(int(senseConfig.get('refresh', 'BodySenseAirborne'))/2, self._sensorCallbackBodySenseAirborne)
@@ -198,7 +195,6 @@ def cozmo_connect_callback(robot: cozmo.robot.Robot):
     logger.info('Excluding Sensors ' + str(ex_sensors))
     runner.bindSensoryCallback(robot, sensors)
     runner.bindMessageCallback(skills)
-    runner.bindRandomBehavior()
     logger.info('Initializing Skills ' + str(skills))
     runner.scheduleTasks(sensors, ex_sensors)
     runner.startScheduledTasks()

@@ -46,11 +46,9 @@ class Health:
                 payload = Skill.payload()
                 payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
                 payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
-                payload.append(Skill.message(ExecutableActions.ENABLE_RANDOM_BEHAVIORS))
                 Skill.enqueue(__class__, payload, )
             else:
                 payload = Skill.payload()
-                payload.append(Skill.message(ExecutableActions.DISABLE_RANDOM_BEHAVIORS))
                 payload.append(Skill.message(ExecutableActions.BECOME_ASLEEP))
                 Skill.enqueue(__class__, payload)
 
@@ -79,7 +77,6 @@ class Health:
                 Skill.enqueue(__class__, payload)
             elif self.charger:
                 payload = Skill.payload()
-                payload.append(Skill.message(ExecutableActions.ENABLE_RANDOM_BEHAVIORS))
                 payload.append(Skill.message(ExecutableActions.MOVE_FORWARD, {'distance': 4}))
                 payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
                 Skill.enqueue(__class__, payload)
@@ -92,7 +89,6 @@ class Health:
     def handle_success(self, action, params):
         if self.recharging == False:
             payload = Skill.payload()
-            payload.append(Skill.message(ExecutableActions.DISABLE_RANDOM_BEHAVIORS))
             payload.append(Skill.message(ExecutableActions.EMOTE_CHAIN, {'type': ExecutableChainEmotes.FALL_ASLEEP}))
             payload.append(Skill.message(ExecutableActions.BECOME_ASLEEP))
             Skill.enqueue(__class__, payload)

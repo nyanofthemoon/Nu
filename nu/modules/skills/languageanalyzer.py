@@ -30,16 +30,15 @@ class LanguageAnalyzer:
             if self.QUESTION_DETECTION:
                 data['question'] = isQuestion(words)
             if self.SENTIMENT_ANALYSIS:
-                data['sentiment'] = {}
-                #data['sentiment'] = SentimentAnalyzer.analyze(text)
+                data['sentiment'] = SentimentAnalyzer.evaluate(text)
             NU.modules.BrainSenseLanguage.publish(str(data))
         except:
             return False
 
 
-nuName = nuConfig.get('self', 'name').casefold()
+nuSimilarNames = nuConfig.get('self', 'similar').split(',')
 def isCallout(words):
-    return nuName in words
+    return any(elem in words for elem in nuSimilarNames)
 
 questionWords = ['what', "what'", 'where', "where'", 'how', "how'", 'why', 'will']
 def isQuestion(words):

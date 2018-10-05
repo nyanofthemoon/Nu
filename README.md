@@ -36,7 +36,7 @@ Contributing to the Cozmo community! This framework allows cuztomizing the robot
 ### Local
 - Connect iOS or Android device to your computer's USB port
 - Place Cozmo on the charger and start the in-app SDK mode
-- Launch ADB `adb-devices`
+- Launch ADB `adb devices`
 - Launch Redis using `redis-server`
 - `cd` unto Nu project directory
 - Launch Nu using `python -m nu -h` and `python nu/webapp/server.py`
@@ -45,7 +45,7 @@ Contributing to the Cozmo community! This framework allows cuztomizing the robot
 ### Pi3
 - Connect Android device to a Pi3 USB port
 - Place Cozmo on the charger and start the in-app SDK mode
-- Launch ADB `adb-devices`
+- Launch ADB `adb devices`
 - Launch Redis using `systemctl start redis-server`
 - Launch Nu using `systemctl start nu` and `systemctl start nu-webapp`
 - Stop using `systemctl stop nu` and `systemctl stop nu-webapp`

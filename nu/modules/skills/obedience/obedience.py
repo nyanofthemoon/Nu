@@ -167,9 +167,9 @@ def getQuestion(words):
         return False
 
 
-commandWake = ['get up', 'wake up', 'stop sleeping']
+commandWake = ['get up', 'wake up']
 commandSleep = ['go to sleep', 'take a nap']
-commandSing = ['sing', 'song']
+commandSing = ['sing', 'song', 'songs', 'singer']
 def getCommand(words, text):
     if any(ext in text for ext in commandWake):
         return 'wake'

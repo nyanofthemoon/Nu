@@ -130,6 +130,7 @@ class Obedience:
                     if command == 'stop':
                         payload.append(Skill.message(ExecutableActions.FREEZE))
                     elif command == 'wake':
+                        payload.append(Skill.message(ExecutableActions.UNDOCK_FROM_CHARGER))
                         payload.append(Skill.message(ExecutableActions.BECOME_IDLE))
                     elif command == 'sleep':
                         payload.append(Skill.message(ExecutableActions.BECOME_ASLEEP))

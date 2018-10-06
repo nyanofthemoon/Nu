@@ -17,8 +17,6 @@ class WeatherForecastApi:
         response = self._current()
         data = 'unknown'
         if response != None:
-            print(response.get('main'))
-            print(response.get('weather'))
             data = str(int(response['main']['temp'])) + ' Celsius with ' + response['weather'][0]['description']
         return data
 

@@ -10,6 +10,9 @@ from nu.modules.skill import Skill
 from nu.modules.config import skill_config
 from nu.modules.config import nu_config
 from nu.modules.body.executor import ExecutableActions
+from nu.modules.query import CorporateBullshitGenerator
+from nu.modules.query import IdeaGenerator
+from nu.modules.query import PoemGenerator
 from nu.modules.query import WeatherForecast
 
 logger = logging.getLogger()
@@ -132,6 +135,26 @@ class Obedience:
                         payload.append(Skill.message(ExecutableActions.BECOME_ASLEEP))
                     elif command == 'sing':
                         payload.append(Skill.message(ExecutableActions.SING))
+                elif any(ext in words for ext in ['hi', 'hello', 'heya']):
+                    payload.append(Skill.message(ExecutableActions.ACKNOWLEDGE))
+                elif any(ext in words for ext in ['b*******', 'buzzword', 'buzzwords', 'corporate']):
+                    payload.append(Skill.message(ExecutableActions.CLEAR_BEHAVIOR))
+                    payload.append(Skill.message(ExecutableActions.SPEAK, {'text': CorporateBullshitGenerator.generate()}))
+                elif any(ext in words for ext in ['startup', 'company', 'product', 'idea']):
+                    payload.append(Skill.message(ExecutableActions.CLEAR_BEHAVIOR))
+                    payload.append(Skill.message(ExecutableActions.SPEAK, {'text': IdeaGenerator.generate(), 'excited': True}))
+                elif 'poem' in words:
+                    payload.append(Skill.message(ExecutableActions.CLEAR_BEHAVIOR))
+                    lines = PoemGenerator.generate().split('\n')
+                    for line in lines:
+                        payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': line}))
+                    payload.append(Skill.message(ExecutableActions.DO_LOOK_AROUND_AT_PEOPLE))
+                elif 'random' in words:
+                    payload.append(Skill.message(ExecutableActions.CLEAR_BEHAVIOR))
+                    payload.append(Skill.message(ExecutableActions.BECOME_RANDOM))
+                elif 'cube' in words:
+                    payload.append(Skill.message(ExecutableActions.CLEAR_BEHAVIOR))
+                    payload.append(Skill.message(ExecutableActions.GO_TO_ANY_CUBE))
                 else:
                     polarity = sentiment.get('polarity')
                     perspective = sentiment.get('perspective')

@@ -63,7 +63,7 @@ class Health:
                         "I'm feeling weak..."
                     ])
                     payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.UNHAPPY}))
-                    payload.append(Skill.message(ExecutableActions.SPEAK_SLOW, {'text': text}))
+                    payload.append(Skill.message(ExecutableActions.SPEAK_SLOW, {'text': text}, sleep=10))
                 else:
                     text = SystemRandom().choice([
                         "Where's my charger?",
@@ -73,7 +73,7 @@ class Health:
                     ])
                     payload.append(Skill.message(ExecutableActions.SPEAK_FAST, {'text': text}))
                     payload.append(Skill.message(ExecutableActions.EMOTE_SINGLE, {'type': ExecutableSingleEmotes.TIRED}))
-                payload.append(Skill.message(ExecutableActions.DOCK_AND_RECHARGE))
+                payload.append(Skill.message(ExecutableActions.DOCK_AND_RECHARGE, sleep=25))
                 Skill.enqueue(__class__, payload)
             elif self.charger:
                 payload = Skill.payload()

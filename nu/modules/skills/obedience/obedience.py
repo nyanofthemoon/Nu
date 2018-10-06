@@ -10,6 +10,7 @@ from nu.modules.skill import Skill
 from nu.modules.config import skill_config
 from nu.modules.config import nu_config
 from nu.modules.body.executor import ExecutableActions
+from nu.modules.query import WeatherForecast
 
 logger = logging.getLogger()
 skillConfig = skill_config()
@@ -96,7 +97,14 @@ class Obedience:
                 elif question == 'date':
                     payload.append(Skill.message(ExecutableActions.SPEAK, {'text': "It's " + strftime("%A %B %-d of %Y", localtime()) + '.'}))
                 elif question == 'weather':
-                    payload.append(Skill.message(ExecutableActions.SPEAK, {'text': 'The weather looks good.'}))
+                    message = None
+                    if 'today' in words:
+                        message = 'today will be ' + WeatherForecast.forecastToday()
+                    elif 'tomorrow' in words:
+                        message = 'tomorrow will be ' + WeatherForecast.forecastTomorrow()
+                    else:
+                        message = 'is currently ' + WeatherForecast.current()
+                    payload.append(Skill.message(ExecutableActions.SPEAK, {'text': 'The weather ' + message}))
                 else:
                     comment = SystemRandom().choice([
                         "I don't know.",
@@ -170,6 +178,7 @@ def getQuestion(words):
 commandWake = ['get up', 'wake up']
 commandSleep = ['go to sleep', 'take a nap']
 commandSing = ['sing', 'song', 'songs', 'singer']
+commandStop = ['stop', 'freeze']
 def getCommand(words, text):
     if any(ext in text for ext in commandWake):
         return 'wake'
@@ -177,7 +186,7 @@ def getCommand(words, text):
         return 'sleep'
     if any(ext in text for ext in commandSing):
         return 'sing'
-    if 'stop' in words:
+    if any(ext in text for ext in commandStop):
         return 'stop'
     else:
         return False
